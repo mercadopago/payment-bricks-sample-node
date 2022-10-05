@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Checkout Bricks Payment Integration</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+    </head>
+    <body>
+        <input id="payment-id" value="{{paymentId}}" type="hidden" />
+        <input id="mercado-pago-public-key" value="{{mercadoPagoPublicKey}}" type="hidden" />
+        <main>
+            <section class="shopping-cart dark">
+                <div class="container container__cart">
+                    <div class="block-heading">
+                        <h2>Payment Result</h2>
+                        <p>This is an example of Mercado Pago Payment Brick Integration</p>
+                    </div>
+                    <div class="content">
+                        <div id="statusScreenBrick_container"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <div class="footer_logo"><img id="horizontal_logo" src="img/horizontal_logo.png"></div>
+            <div class="footer_text">
+                <p>Developers Site:</p>
+                <p><a href="https://www.mercadopago.com/developers">https://www.mercadopago.com/developers</a></p>
+            </div>
+        </footer>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script type="text/javascript" src="js/status.js" defer></script>
+</html>

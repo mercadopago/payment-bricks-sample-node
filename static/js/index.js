@@ -6,7 +6,7 @@ async function loadPaymentForm() {
     const productCost = document.getElementById('amount').value;
     const unitPrice = document.getElementById('unit-price').innerText;
     const quantity = document.getElementById('quantity').value;
-    
+
     const preferenceId = await getPreferenceId(unitPrice, quantity);
 
     const settings = {
@@ -21,8 +21,8 @@ async function loadPaymentForm() {
             onError: (error) => {
                 alert(JSON.stringify(error))
             },
-            onSubmit: ({selectedPaymentMethod, formData}) => {
-                proccessPayment(formData)
+            onSubmit: ({ selectedPaymentMethod, formData }) => {
+                proccessPayment(selectedPaymentMethod, formData)
             }
         },
         locale: 'en',
@@ -56,38 +56,45 @@ const getPreferenceId = async (unitPrice, quantity) => {
     return preferenceId;
 };
 
-const proccessPayment = (formData) => {
-    fetch("/process_payment", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-    })
-    .then(response => {
-        return response.json();
-    })
-    .then(result => {
-        if(!result.hasOwnProperty("error_message")) {
-            document.getElementById("payment-id").innerText = result.id;
-            document.getElementById("payment-status").innerText = result.status;
-            document.getElementById("payment-detail").innerText = result.detail;
-            $('.container__payment').fadeOut(500);
-            setTimeout(() => { $('.container__result').show(500).fadeIn(); }, 500);
-        } else {
-            alert(JSON.stringify({
-                status: result.status,
-                message: result.error_message
-            }))
+const proccessPayment = (selectedPaymentMethod, formData) => {
+    return new Promise((resolve, reject) => {
+        let url = undefined;
+
+        if (selectedPaymentMethod === 'credit_card' || selectedPaymentMethod === 'debit_card') {
+            url = 'process_payment_card';
+        } else if (selectedPaymentMethod === 'bank_transfer') {
+            url = 'process_payment_pix';
+        } else if (selectedPaymentMethod === 'ticket') {
+            url = 'process_payment_ticket';
         }
-    })
-    .catch(error => {
-        alert("Unexpected error\n"+JSON.stringify(error));
+
+        if (url) {
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData)
+            })
+                .then((response) => {
+                    // receber o resultado do pagamento
+                    resolve();
+                })
+                .catch((error) => {
+                    // lidar com a resposta de erro ao tentar criar o pagamento
+                    reject();
+                })
+        } else if (selectedPaymentMethod === 'wallet_purchase') {
+            // wallet_purchase (Conta Mercado Pago) não precisa ser enviado pelo backend
+            resolve();
+        } else {
+            reject();
+        }
     });
 }
 
 // Handle transitions
-document.getElementById('checkout-btn').addEventListener('click', function(){
+document.getElementById('checkout-btn').addEventListener('click', function () {
     $('.container__cart').fadeOut(500);
     setTimeout(() => {
         loadPaymentForm();
@@ -95,13 +102,13 @@ document.getElementById('checkout-btn').addEventListener('click', function(){
     }, 500);
 });
 
-document.getElementById('go-back').addEventListener('click', function(){
+document.getElementById('go-back').addEventListener('click', function () {
     $('.container__payment').fadeOut(500);
     setTimeout(() => { $('.container__cart').show(500).fadeIn(); }, 500);
 });
 
 // Handle price update
-function updatePrice(){
+function updatePrice() {
     let quantity = document.getElementById('quantity').value;
     let unitPrice = document.getElementById('unit-price').innerText;
     let amount = parseInt(unitPrice) * parseInt(quantity);

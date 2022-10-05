@@ -29,12 +29,25 @@ app.use(express.json());
 
 app.get("/", function (req, res) {
   res.status(200).render("index", { mercadoPagoPublicKey });
-}); 
+});
+
+app.get("/payment_status", (req, res) => {
+  const { payment_id: paymentId } = req.query;
+  res.status(200).render("status", { mercadoPagoPublicKey, paymentId });
+});
 
 app.get("/preference_id", async function (req, res) {
   const { unitPrice, quantity } = req.query;
+  const backUrl = "https://hip-bananas-cough-189-125-49-228.loca.lt/payment_status";
+
   const preference = {
     purpose: "wallet_purchase",
+    back_urls: {
+      success: backUrl,
+      failure: backUrl,
+      pending: backUrl
+    },
+    auto_return: "approved",
     items: [
       {
         id: "item-ID-1234",
@@ -48,18 +61,18 @@ app.get("/preference_id", async function (req, res) {
   try {
     const response = await mercadopago.preferences.create(preference);
     const preferenceId = response.body.id;
-    res.status(201).json({preferenceId});
-  } catch(error) {
+    res.status(201).json({ preferenceId });
+  } catch (error) {
     console.log(error)
-    res.status(500).json({error});
+    res.status(500).json({ error });
   }
-}); 
+});
 
 app.post("/process_payment", (req, res) => {
   const { body } = req;
-  
+
   mercadopago.payment.save(body)
-    .then(function(response) {
+    .then(function (response) {
       const { response: data } = response;
 
       res.status(201).json({
@@ -68,9 +81,29 @@ app.post("/process_payment", (req, res) => {
         id: data.id
       });
     })
-    .catch(function(error) {
+    .catch(function (error) {
       console.log(error);
-      const { errorMessage, errorStatus }  = validateError(error);
+      const { errorMessage, errorStatus } = validateError(error);
+      res.status(errorStatus).json({ error_message: errorMessage });
+    });
+});
+
+app.post("/process_payment_ticket", (req, res) => {
+  const { body } = req;
+
+  mercadopago.payment.create(body)
+    .then(function (response) {
+      const { response: data } = response;
+
+      res.status(201).json({
+        detail: data.status_detail,
+        status: data.status,
+        id: data.id
+      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      const { errorMessage, errorStatus } = validateError(error);
       res.status(errorStatus).json({ error_message: errorMessage });
     });
 });
@@ -79,7 +112,7 @@ function validateError(error) {
   let errorMessage = 'Unknown error cause';
   let errorStatus = 400;
 
-  if(error.cause) {
+  if (error.cause) {
     const sdkErrorMessage = error.cause[0].description;
     errorMessage = sdkErrorMessage || errorMessage;
 
