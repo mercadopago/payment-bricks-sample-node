@@ -10,6 +10,7 @@ async function loadPaymentForm() {
         },
         callbacks: {
             onReady: () => {
+                document.getElementById('loader-container').style.display = 'none'
                 console.log('brick ready')
             },
             onError: (error) => {
