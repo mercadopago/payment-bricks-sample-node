@@ -78,11 +78,9 @@ const proccessPayment = (selectedPaymentMethod, formData) => {
                 body: JSON.stringify(formData)
             })
                 .then((response) => {
-                    // receber o resultado do pagamento
                     resolve();
                 })
                 .catch((error) => {
-                    // lidar com a resposta de erro ao tentar criar o pagamento
                     reject();
                 })
         } else if (selectedPaymentMethod === 'wallet_purchase') {

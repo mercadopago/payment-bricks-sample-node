@@ -68,21 +68,23 @@ app.get("/preference_id", async function (req, res) {
   }
 });
 
-app.post("/process_payment", (req, res) => {
+app.post("/process_payment_card", (req, res) => {
   const { body } = req;
 
   mercadopago.payment.save(body)
-    .then(function (response) {
-      const { response: data } = response;
+  .then(response => res.status(201).json(formatResponse(response)))
+  .catch(error => {
+    const { errorMessage, errorStatus } = validateError(error);
+    res.status(errorStatus).json({ error_message: errorMessage });
+  });
+});
 
-      res.status(201).json({
-        detail: data.status_detail,
-        status: data.status,
-        id: data.id
-      });
-    })
-    .catch(function (error) {
-      console.log(error);
+app.post("/process_payment_pix", (req, res) => {
+  const { body } = req;
+
+  mercadopago.payment.create(body)
+    .then(response => res.status(201).json(formatResponse(response)))
+    .catch(error => {
       const { errorMessage, errorStatus } = validateError(error);
       res.status(errorStatus).json({ error_message: errorMessage });
     });
@@ -92,21 +94,21 @@ app.post("/process_payment_ticket", (req, res) => {
   const { body } = req;
 
   mercadopago.payment.create(body)
-    .then(function (response) {
-      const { response: data } = response;
-
-      res.status(201).json({
-        detail: data.status_detail,
-        status: data.status,
-        id: data.id
-      });
-    })
-    .catch(function (error) {
-      console.log(error);
+    .then(response => res.status(201).json(formatResponse(response)))
+    .catch(error => {
       const { errorMessage, errorStatus } = validateError(error);
       res.status(errorStatus).json({ error_message: errorMessage });
     });
 });
+
+function formatResponse(response) {
+  const { response: data } = response;
+  return {
+    detail: data.status_detail,
+    status: data.status,
+    id: data.id
+  };
+}
 
 function validateError(error) {
   let errorMessage = 'Unknown error cause';
