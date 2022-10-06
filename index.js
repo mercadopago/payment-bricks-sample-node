@@ -3,6 +3,8 @@ const path = require("path");
 const express = require("express");
 const mercadopago = require("mercadopago");
 
+const host = process.env.HOST;
+
 const mercadoPagoPublicKey = process.env.MERCADO_PAGO_SAMPLE_PUBLIC_KEY;
 if (!mercadoPagoPublicKey) {
   console.log("Error: public key not defined");
@@ -38,7 +40,7 @@ app.get("/payment_status", (req, res) => {
 
 app.get("/preference_id", async function (req, res) {
   const { unitPrice, quantity } = req.query;
-  const backUrl = "https://clean-hoops-tap-177-138-223-206.loca.lt/payment_status";
+  const backUrl = `${host}/payment_status`;
 
   const preference = {
     back_urls: {
