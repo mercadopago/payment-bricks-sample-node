@@ -121,7 +121,5 @@ function updatePrice() {
     document.getElementById('amount').value = amount;
 };
 
-
-
 document.getElementById('quantity').addEventListener('change', updatePrice);
 updatePrice();

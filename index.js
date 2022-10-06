@@ -38,10 +38,9 @@ app.get("/payment_status", (req, res) => {
 
 app.get("/preference_id", async function (req, res) {
   const { unitPrice, quantity } = req.query;
-  const backUrl = "https://hip-bananas-cough-189-125-49-228.loca.lt/payment_status";
+  const backUrl = "https://clean-hoops-tap-177-138-223-206.loca.lt/payment_status";
 
   const preference = {
-    purpose: "wallet_purchase",
     back_urls: {
       success: backUrl,
       failure: backUrl,
