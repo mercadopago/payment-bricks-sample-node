@@ -77,8 +77,10 @@ const proccessPayment = (selectedPaymentMethod, formData) => {
                 },
                 body: JSON.stringify(formData)
             })
-                .then((response) => {
+                .then(response => response.json())
+                .then((json) => {
                     resolve();
+                    window.location = `/payment_status?payment_id=${json.id}`
                 })
                 .catch((error) => {
                     reject();
