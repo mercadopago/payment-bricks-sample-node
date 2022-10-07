@@ -87,7 +87,6 @@ const proccessPayment = (selectedPaymentMethod, formData) => {
                         resolve();
                         window.location = `/payment_status?payment_id=${json.id}`
                     }
-                    
                 })
                 .catch((error) => {
                     console.error(error)
@@ -96,6 +95,7 @@ const proccessPayment = (selectedPaymentMethod, formData) => {
         } else if (selectedPaymentMethod === 'wallet_purchase') {
             // wallet_purchase (Conta Mercado Pago) não precisa ser enviado pelo backend
             resolve();
+            navToWallet();
         } else {
             reject();
         }
@@ -115,6 +115,14 @@ document.getElementById('go-back').addEventListener('click', function () {
     $('.container__payment').fadeOut(500);
     setTimeout(() => { $('.container__cart').show(500).fadeIn(); }, 500);
 });
+
+function navToWallet() {
+    $('.container__payment').fadeOut(500);
+    setTimeout(() => {
+        loadPaymentForm();
+        $('.container__result').show(500).fadeIn();
+    }, 500);
+};
 
 // Handle price update
 function updatePrice() {
