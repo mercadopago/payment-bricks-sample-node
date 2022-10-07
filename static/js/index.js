@@ -23,7 +23,7 @@ async function loadPaymentForm() {
                 alert(JSON.stringify(error))
             },
             onSubmit: ({ selectedPaymentMethod, formData }) => {
-                proccessPayment(selectedPaymentMethod, formData)
+                return proccessPayment(selectedPaymentMethod, formData)
             }
         },
         locale: 'en',
@@ -79,10 +79,18 @@ const proccessPayment = (selectedPaymentMethod, formData) => {
             })
                 .then(response => response.json())
                 .then((json) => {
-                    resolve();
-                    window.location = `/payment_status?payment_id=${json.id}`
+                    const { error_message } = json;
+                    if(error_message) {
+                        alert(`Error: ${JSON.stringify(error_message)}`)
+                        reject();
+                    } else {
+                        resolve();
+                        window.location = `/payment_status?payment_id=${json.id}`
+                    }
+                    
                 })
                 .catch((error) => {
+                    console.error(error)
                     reject();
                 })
         } else if (selectedPaymentMethod === 'wallet_purchase') {
