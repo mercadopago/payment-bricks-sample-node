@@ -1,9 +1,12 @@
-const open = require("open");
 const path = require("path");
 const express = require("express");
 const mercadopago = require("mercadopago");
 
 const host = process.env.HOST;
+if (!host) {
+  console.log("Error: host not defined");
+  process.exit(1);
+}
 
 const mercadoPagoPublicKey = process.env.MERCADO_PAGO_SAMPLE_PUBLIC_KEY;
 if (!mercadoPagoPublicKey) {
@@ -128,5 +131,4 @@ function validateError(error) {
 
 app.listen(8080, () => {
   console.log("The server is now running on port 8080");
-  // open("http://localhost:8080");
 });

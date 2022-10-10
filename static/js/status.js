@@ -17,6 +17,7 @@ async function loadPaymentForm() {
                 alert(JSON.stringify(error))
             },
         },
+        locale: 'en',
         customization: {
             visual: {
                 style: {
