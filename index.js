@@ -85,6 +85,7 @@ app.post("/process_payment_card", (req, res) => {
 
 app.post("/process_payment_pix", (req, res) => {
   const { body } = req;
+  body.external_reference = 'ASD1234',
 
   mercadopago.payment.create(body)
     .then(response => res.status(201).json(formatResponse(response)))
