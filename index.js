@@ -56,10 +56,10 @@ app.get("/preference_id", async function (req, res) {
       {
         id: "item-ID-1234",
         title: "White t-shirt",
-        unit_price: Number(unitPrice),
-        quantity: parseInt(quantity)
-      }
-    ]
+        unit_price: unitPrice ? Number(unitPrice) : 100,
+        quantity: quantity ? parseInt(quantity) : 100,
+      },
+    ],
   };
 
   try {
