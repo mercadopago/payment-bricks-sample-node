@@ -57,7 +57,7 @@ app.get("/preference_id", async function (req, res) {
         id: "item-ID-1234",
         title: "White t-shirt",
         unit_price: unitPrice ? Number(unitPrice) : 100,
-        quantity: quantity ? parseInt(quantity) : 100,
+        quantity: quantity ? parseInt(quantity) : 10,
       },
     ],
   };
@@ -85,7 +85,6 @@ app.post("/process_payment_card", (req, res) => {
 
 app.post("/process_payment_pix", (req, res) => {
   const { body } = req;
-  body.external_reference = 'ASD1234',
 
   mercadopago.payment.create(body)
     .then(response => res.status(201).json(formatResponse(response)))
