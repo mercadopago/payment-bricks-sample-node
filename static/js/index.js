@@ -93,7 +93,7 @@ const proccessPayment = (selectedPaymentMethod, formData) => {
                     reject();
                 })
         } else if (selectedPaymentMethod === 'wallet_purchase') {
-            // wallet_purchase (Conta Mercado Pago) não precisa ser enviado pelo backend
+            // wallet_purchase (Mercado Pago Wallet) does not need to be sent to backend
             resolve();
             navToWallet();
         } else {
