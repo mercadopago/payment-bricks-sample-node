@@ -40,6 +40,7 @@ npm run localtunnel
 ``` 
 
 2. Copy the generated URL:
+<img width="807" alt="image" src="https://user-images.githubusercontent.com/104934463/210627117-395d328b-3f6a-4255-be18-9976ffbd6802.png">
 
 
 3. Keep the previous terminal instance running and open a new one. In the new terminal instance, run the following command:
