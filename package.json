@@ -4,13 +4,15 @@
   "description": "A simple Mercado Pago Payment Bricks sample project",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "localtunnel": "lt --port 8000"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
     "hbs": "^4.1.2",
+    "localtunnel": "^2.0.2",
     "mercadopago": "^1.5.13"
   }
 }
