@@ -32,6 +32,7 @@ async function loadPaymentForm() {
                 creditCard: 'all',
                 debitCard: 'all',
                 ticket: 'all',
+                atm: 'all',
                 bankTransfer: 'all',
                 maxInstallments: 5
             },
@@ -65,7 +66,7 @@ const proccessPayment = (selectedPaymentMethod, formData) => {
             url = 'process_payment_card';
         } else if (selectedPaymentMethod === 'bank_transfer') {
             url = 'process_payment_pix';
-        } else if (selectedPaymentMethod === 'ticket') {
+        } else if (selectedPaymentMethod === 'ticket' || selectedPaymentMethod === 'atm') {
             url = 'process_payment_ticket';
         }
 
