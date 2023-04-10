@@ -6,6 +6,7 @@ async function loadPaymentForm() {
     const productCost = document.getElementById('amount').value;
     const unitPrice = document.getElementById('unit-price').innerText;
     const quantity = document.getElementById('quantity').value;
+    const productName = document.getElementById('product-name').innerText;
 
     const preferenceId = await getPreferenceId(unitPrice, quantity);
 
@@ -23,6 +24,8 @@ async function loadPaymentForm() {
                 alert(JSON.stringify(error))
             },
             onSubmit: ({ selectedPaymentMethod, formData }) => {
+                // Here you can add properties to formData if you want to
+                formData.description = productName
                 return proccessPayment(selectedPaymentMethod, formData)
             }
         },
@@ -31,10 +34,14 @@ async function loadPaymentForm() {
             paymentMethods: {
                 creditCard: 'all',
                 debitCard: 'all',
+                /*
+                    If some of the following payment methods is not valid for your country,
+                    the Brick will show a warning message in the browser console
+                */
                 ticket: 'all',
                 atm: 'all',
                 bankTransfer: 'all',
-                maxInstallments: 5
+                mercadoPago: 'all',
             },
             visual: {
                 style: {
@@ -68,6 +75,10 @@ const proccessPayment = (selectedPaymentMethod, formData) => {
             url = 'process_payment_pix';
         } else if (selectedPaymentMethod === 'ticket' || selectedPaymentMethod === 'atm') {
             url = 'process_payment_ticket';
+        }
+
+        if (selectedPaymentMethod === 'wallet_purchase') {
+
         }
 
         if (url) {
