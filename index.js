@@ -67,42 +67,28 @@ app.get("/preference_id", async function (req, res) {
     const preferenceId = response.body.id;
     res.status(201).json({ preferenceId });
   } catch (error) {
-    console.log(error)
     res.status(500).json({ error });
   }
 });
 
-app.post("/process_payment_card", (req, res) => {
-  const { body } = req;
+app.post("/process_payment", (req, res) => {
+  const { selectedPaymentMethod, formData } = req.body;
 
-  mercadopago.payment.save(body)
-  .then(response => res.status(201).json(formatResponse(response)))
-  .catch(error => {
+  const handleSuccess = response => res.status(201).json(formatResponse(response));
+  const handleError = error => {
     const { errorMessage, errorStatus } = validateError(error);
     res.status(errorStatus).json({ error_message: errorMessage });
-  });
-});
+  };
 
-app.post("/process_payment_pix", (req, res) => {
-  const { body } = req;
-
-  mercadopago.payment.create(body)
-    .then(response => res.status(201).json(formatResponse(response)))
-    .catch(error => {
-      const { errorMessage, errorStatus } = validateError(error);
-      res.status(errorStatus).json({ error_message: errorMessage });
-    });
-});
-
-app.post("/process_payment_ticket", (req, res) => {
-  const { body } = req;
-
-  mercadopago.payment.create(body)
-    .then(response => res.status(201).json(formatResponse(response)))
-    .catch(error => {
-      const { errorMessage, errorStatus } = validateError(error);
-      res.status(errorStatus).json({ error_message: errorMessage });
-    });
+  if ( selectedPaymentMethod === 'credit_card' || selectedPaymentMethod === 'debit_card' ) {
+    mercadopago.payment.save(formData)
+      .then(response => handleSuccess(response))
+      .catch(error => handleError(error));
+  } else {
+    mercadopago.payment.create(formData)
+      .then(response => handleSuccess(response))
+      .catch(error => handleError(error));
+  }
 });
 
 function formatResponse(response) {
@@ -116,9 +102,9 @@ function formatResponse(response) {
 
 function validateError(error) {
   let errorMessage = 'Unknown error cause';
-  let errorStatus = 400;
+  let errorStatus = 500;
 
-  if (error.cause) {
+  if (error.cause && error.cause.length) {
     const sdkErrorMessage = error.cause[0].description;
     errorMessage = sdkErrorMessage || errorMessage;
 

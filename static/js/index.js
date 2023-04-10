@@ -6,7 +6,6 @@ async function loadPaymentForm() {
     const productCost = document.getElementById('amount').value;
     const unitPrice = document.getElementById('unit-price').innerText;
     const quantity = document.getElementById('quantity').value;
-    const productName = document.getElementById('product-name').innerText;
 
     const preferenceId = await getPreferenceId(unitPrice, quantity);
 
@@ -24,9 +23,7 @@ async function loadPaymentForm() {
                 alert(JSON.stringify(error))
             },
             onSubmit: ({ selectedPaymentMethod, formData }) => {
-                // Here you can add properties to formData if you want to
-                formData.description = productName
-                return proccessPayment(selectedPaymentMethod, formData)
+                return proccessPayment({ selectedPaymentMethod, formData })
             }
         },
         locale: 'en',
@@ -65,29 +62,26 @@ const getPreferenceId = async (unitPrice, quantity) => {
     return preferenceId;
 };
 
-const proccessPayment = (selectedPaymentMethod, formData) => {
+const proccessPayment = ({ selectedPaymentMethod, formData }) => {
     return new Promise((resolve, reject) => {
-        let url = undefined;
+        if (selectedPaymentMethod === 'wallet_purchase' || selectedPaymentMethod === 'onboarding_credits') {
+            // wallet_purchase and onboarding_credits does not need to be sent to backend
+            navToWallet();
+            resolve();
+        } else {
+            /*
+                Here you can add properties to formData if you want to.
 
-        if (selectedPaymentMethod === 'credit_card' || selectedPaymentMethod === 'debit_card') {
-            url = 'process_payment_card';
-        } else if (selectedPaymentMethod === 'bank_transfer') {
-            url = 'process_payment_pix';
-        } else if (selectedPaymentMethod === 'ticket' || selectedPaymentMethod === 'atm') {
-            url = 'process_payment_ticket';
-        }
+                If you are in Peru, description is mandatory for 'pagoefectivo_atm' selected payment method.
+            */
+            formData.description = document.getElementById('product-name').innerText
 
-        if (selectedPaymentMethod === 'wallet_purchase') {
-
-        }
-
-        if (url) {
-            fetch(url, {
+            fetch('process_payment', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({ selectedPaymentMethod, formData })
             })
                 .then(response => response.json())
                 .then((json) => {
@@ -104,12 +98,6 @@ const proccessPayment = (selectedPaymentMethod, formData) => {
                     console.error(error)
                     reject();
                 })
-        } else if (selectedPaymentMethod === 'wallet_purchase') {
-            // wallet_purchase (Mercado Pago Wallet) does not need to be sent to backend`
-            resolve();
-            navToWallet();
-        } else {
-            reject();
         }
     });
 }
