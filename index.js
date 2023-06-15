@@ -74,21 +74,20 @@ app.get("/preference_id", async function (req, res) {
 app.post("/process_payment", (req, res) => {
   const { selectedPaymentMethod, formData } = req.body;
 
-  const handleSuccess = response => res.status(201).json(formatResponse(response));
-  const handleError = error => {
-    const { errorMessage, errorStatus } = validateError(error);
-    res.status(errorStatus).json({ error_message: errorMessage });
-  };
-
-  if ( selectedPaymentMethod === 'credit_card' || selectedPaymentMethod === 'debit_card' ) {
-    mercadopago.payment.save(formData)
-      .then(response => handleSuccess(response))
-      .catch(error => handleError(error));
-  } else {
-    mercadopago.payment.create(formData)
-      .then(response => handleSuccess(response))
-      .catch(error => handleError(error));
+  if ( formData?.payment_method_id === 'pse' ) {
+    // 'pse' is only available for Colombia
+    formData.additional_info = {
+      ip_address: '127.0.0.1'
+    }
+    formData.callback_url = host
   }
+
+  mercadopago.payment.create(formData)
+    .then(response => res.status(201).json(formatResponse(response)))
+    .catch(error => {
+      const { errorMessage, errorStatus } = validateError(error);
+      res.status(errorStatus).json({ error_message: errorMessage });
+    });
 });
 
 function formatResponse(response) {
