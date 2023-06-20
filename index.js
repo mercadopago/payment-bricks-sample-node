@@ -24,6 +24,12 @@ mercadopago.configurations.setAccessToken(mercadoPagoAccessToken);
 
 const app = express();
 
+/*
+  If you are going to use this code as a quick start for your project,
+  make sure you trust the proxy in order to keep the following line.
+*/
+app.set('trust proxy', true);
+
 app.set("view engine", "html");
 app.engine("html", require("hbs").__express);
 app.set("views", path.join(__dirname, "views"))
@@ -77,7 +83,11 @@ app.post("/process_payment", (req, res) => {
   if ( formData?.payment_method_id === 'pse' ) {
     // 'pse' is only available for Colombia
     formData.additional_info = {
-      ip_address: '127.0.0.1'
+      /*
+        If you are running behind a proxy, which is the case of this sample project (because we use localtunnel)
+        'req.ip' will only work because of the following express setup => app.set('trust proxy', true)
+      */
+      ip_address: req.ip
     }
     formData.callback_url = `${host}/payment_status`
   }
