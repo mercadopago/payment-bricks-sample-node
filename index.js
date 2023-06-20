@@ -79,7 +79,7 @@ app.post("/process_payment", (req, res) => {
     formData.additional_info = {
       ip_address: '127.0.0.1'
     }
-    formData.callback_url = host
+    formData.callback_url = `${host}/payment_status`
   }
 
   mercadopago.payment.create(formData)
