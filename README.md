@@ -51,7 +51,7 @@ HOST=YOUR-URL MERCADO_PAGO_SAMPLE_PUBLIC_KEY=YOUR-PUBLIC-KEY MERCADO_PAGO_SAMPLE
 
 4. Remember to replace `YOUR-URL` with the URL from the step 2, `YOUR_PUBLIC_KEY` and `YOUR_ACCESS_TOKEN` with the corresponding [credentials](https://www.mercadopago.com/developers/panel) from your account.
 
-5. Navigate to `YOUR-URL` from step 2 in your browser. In your first access to this URL, you will be prompted with a warning page. You'll need to inform your public IP Address, but don't worry, the warning page shows you how you can do it. Then paste your public IP in the input field and  **"Click to Submit"**.
+5. Navigate to `YOUR-URL` from step 2 in your browser. In your first access to this URL, you will be prompted with a warning page. You'll need to inform your public IP Address, but don't worry, the warning page shows you how you can do that. Then paste your public IP in the input field and  **"Click to Submit"**.
 
 6. That's all, now you can access your localhost running app through the URL exposed by localtunnel.
 
