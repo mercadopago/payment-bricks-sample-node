@@ -72,7 +72,10 @@ const proccessPayment = ({ selectedPaymentMethod, formData }) => {
             /*
                 Here you can add properties to formData if you want to.
 
-                If you are in Peru, description is mandatory for 'pagoefectivo_atm' selected payment method.
+                - For Peru, 'description' is mandatory for 'pagoefectivo_atm' payment method.
+                
+                - For Colombia, 'description', 'ip_address' and 'callback_url' are mandatory for 'pse' payment method,
+                  but the two last mentioned fields, we recommend adding in the backend.
             */
             formData.description = document.getElementById('product-name').innerText
 

@@ -24,6 +24,12 @@ mercadopago.configurations.setAccessToken(mercadoPagoAccessToken);
 
 const app = express();
 
+/*
+  If you are going to use this code as a quick start for your project,
+  make sure you trust the proxy in order to keep the following line.
+*/
+app.set('trust proxy', true);
+
 app.set("view engine", "html");
 app.engine("html", require("hbs").__express);
 app.set("views", path.join(__dirname, "views"))
@@ -74,21 +80,24 @@ app.get("/preference_id", async function (req, res) {
 app.post("/process_payment", (req, res) => {
   const { selectedPaymentMethod, formData } = req.body;
 
-  const handleSuccess = response => res.status(201).json(formatResponse(response));
-  const handleError = error => {
-    const { errorMessage, errorStatus } = validateError(error);
-    res.status(errorStatus).json({ error_message: errorMessage });
-  };
-
-  if ( selectedPaymentMethod === 'credit_card' || selectedPaymentMethod === 'debit_card' ) {
-    mercadopago.payment.save(formData)
-      .then(response => handleSuccess(response))
-      .catch(error => handleError(error));
-  } else {
-    mercadopago.payment.create(formData)
-      .then(response => handleSuccess(response))
-      .catch(error => handleError(error));
+  if ( formData?.payment_method_id === 'pse' ) {
+    // 'pse' is only available for Colombia
+    formData.additional_info = {
+      /*
+        If you are running behind a proxy, which is the case of this sample project (because we use localtunnel)
+        'req.ip' will only work because of the following express setup => app.set('trust proxy', true)
+      */
+      ip_address: req.ip
+    }
+    formData.callback_url = `${host}/payment_status`
   }
+
+  mercadopago.payment.create(formData)
+    .then(response => res.status(201).json(formatResponse(response)))
+    .catch(error => {
+      const { errorMessage, errorStatus } = validateError(error);
+      res.status(errorStatus).json({ error_message: errorMessage });
+    });
 });
 
 function formatResponse(response) {
