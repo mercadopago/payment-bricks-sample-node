@@ -16,7 +16,7 @@
 1. Clone the project.
 
 ```bash
-git clone https://github.com/AleFossati/payment-bricks-sample-node.git
+git clone https://github.com/mercadopago/payment-bricks-sample-node.git
 ```
 
 2. Go to the project's folder.
