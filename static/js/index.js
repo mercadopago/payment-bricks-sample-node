@@ -31,6 +31,7 @@ async function loadPaymentForm() {
             paymentMethods: {
                 creditCard: 'all',
                 debitCard: 'all',
+                prepaidCard: 'all',
                 /*
                     If some of the following payment methods is not valid for your country,
                     the Brick will show a warning message in the browser console
